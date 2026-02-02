@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Mon Feb  2 11:44:43 2026
-
-@author: 23025740
-"""
-
 import streamlit as st
 import pandas as pd
 
@@ -13,463 +6,142 @@ import pandas as pd
 # --------------------------------------------------
 st.set_page_config(
     page_title="Research & Data Science Portfolio",
+    page_icon="🔬",
     layout="wide"
 )
+
+# --------------------------------------------------
+# Custom Styling
+# --------------------------------------------------
+st.markdown("""
+    <style>
+    .main {
+        background-color: #f5f7f9;
+    }
+    .stButton>button {
+        width: 100%;
+        border-radius: 5px;
+        height: 3em;
+        background-color: #007bff;
+        color: white;
+    }
+    </style>
+    """, unsafe_allow_html=True)
+
+# --------------------------------------------------
+# Initialize Session State (Crucial for persistence)
+# --------------------------------------------------
+if "education" not in st.session_state:
+    st.session_state.education = []
+if "experience" not in st.session_state:
+    st.session_state.experience = []
+if "projects" not in st.session_state:
+    st.session_state.projects = []
+if "publications" not in st.session_state:
+    st.session_state.publications = []
 
 # --------------------------------------------------
 # Sidebar Navigation
 # --------------------------------------------------
 st.sidebar.title("📌 Navigation")
-
 menu = st.sidebar.radio(
     "Go to:",
-    [
-        "Researcher Profile",
-        "Education",
-        "Experience",
-        "Research Interests",
-        "Projects",
-        "Publications",
-        "STEM Data Explorer",
-        "Contact"
-    ],
-    key="main_navigation"  
+    ["Profile", "Education", "Experience", "Research Interests", "Projects", "Publications", "STEM Explorer", "Contact"]
 )
 
 # --------------------------------------------------
-# Initialize Session State
+# 1. Profile Section
 # --------------------------------------------------
-for key in ["education", "experience", "projects", "publications"]:
-    if key not in st.session_state:
-        st.session_state[key] = []
-
-# --------------------------------------------------
-# Researcher Profile
-# --------------------------------------------------
-if menu == "Researcher Profile":
+if menu == "Profile":
     st.title("👤 Researcher Profile")
-
-    name = st.text_input("Name", "Dr. Kevin Lee")
-    field = st.text_input("Field", "Data Science & Artificial Intelligence")
-    institution = st.text_input("Institution", "Tech Innovation University")
-    bio = st.text_area(
-        "Short Bio",
-        "Researcher and data professional with interests in data analysis, "
-        "data engineering, and quantitative modeling."
-    )
-
-    col1, col2 = st.columns(2)
+    col1, col2 = st.columns([1, 2])
+    
     with col1:
-        st.write(f"**Name:** {name}")
-        st.write(f"**Field:** {field}")
-        st.write(f"**Institution:** {institution}")
+        name = st.text_input("Name", "Dr. Kevin Lee")
+        field = st.text_input("Field", "Data Science & AI")
+        inst = st.text_input("Institution", "Tech Innovation University")
+    
     with col2:
-        st.info(bio)
+        bio = st.text_area("Short Bio", "Researcher focused on scalable data-driven systems.")
+        st.info(f"**Current Status:** {field} at {inst}")
 
 # --------------------------------------------------
-# Education
+# 2. Education & Experience (Combined Logic)
 # --------------------------------------------------
-elif menu == "Education":
-    st.title("🎓 Education")
+elif menu in ["Education", "Experience"]:
+    st.title(f" {menu}")
+    
+    # Selection logic based on menu
+    mode = "education" if menu == "Education" else "experience"
+    
+    with st.expander(f"➕ Add New {menu}"):
+        if mode == "education":
+            c1, c2 = st.columns(2)
+            deg = c1.text_input("Degree")
+            sch = c2.text_input("School")
+            yr = st.text_input("Year")
+            if st.button("Save Education"):
+                st.session_state.education.append({"Degree": deg, "School": sch, "Year": yr})
+        else:
+            role = st.text_input("Role")
+            org = st.text_input("Organization")
+            dur = st.text_input("Duration")
+            if st.button("Save Experience"):
+                st.session_state.experience.append({"Role": role, "Org": org, "Dur": dur})
 
-    with st.expander("Add Education"):
-        degree = st.text_input("Degree")
-        school = st.text_input("School / University")
-        year = st.text_input("Year")
-        focus = st.text_area("Specialization / Focus")
-
-        if st.button("Add Education"):
-            st.session_state.education.append({
-                "Degree": degree,
-                "School": school,
-                "Year": year,
-                "Focus": focus
-            })
-            st.success("Education added")
-
-    for edu in st.session_state.education:
-        st.markdown(f"""
-        **{edu['Degree']}**  
-        *{edu['School']}* ({edu['Year']})  
-        {edu['Focus']}
-        """)
-
-# --------------------------------------------------
-# Experience
-# --------------------------------------------------
-elif menu == "Experience":
-    st.title("💼 Experience")
-
-    with st.expander("Add Experience"):
-        role = st.text_input("Role / Position")
-        org = st.text_input("Organization")
-        duration = st.text_input("Duration")
-        description = st.text_area("Description")
-
-        if st.button("Add Experience"):
-            st.session_state.experience.append({
-                "Role": role,
-                "Organization": org,
-                "Duration": duration,
-                "Description": description
-            })
-            st.success("Experience added")
-
-    for exp in st.session_state.experience:
-        st.markdown(f"""
-        **{exp['Role']}** — {exp['Organization']}  
-        *{exp['Duration']}*  
-        {exp['Description']}
-        """)
+    # Display items
+    items = st.session_state.education if mode == "education" else st.session_state.experience
+    for item in items:
+        st.write(f"---")
+        st.write(item)
 
 # --------------------------------------------------
-# Research Interests
-# --------------------------------------------------
-elif menu == "Research Interests":
-    st.title("🔬 Research Interests & Career Ventures")
-
-    areas = {
-        "📊 Data Analysis": [
-            "Exploratory Data Analysis (EDA)",
-            "Statistical insights",
-            "Visualization and reporting"
-        ],
-        "🤖 Data Science": [
-            "Machine learning",
-            "Predictive modeling",
-            "Feature engineering"
-        ],
-        "🏗️ Data Engineering": [
-            "ETL pipelines",
-            "Databases and data warehousing",
-            "Big data systems"
-        ],
-        "📈 Quantitative Analysis": [
-            "Statistical modeling",
-            "Time-series analysis",
-            "Risk and performance modeling"
-        ]
-    }
-
-    for area, items in areas.items():
-        with st.expander(area):
-            for item in items:
-                st.write(f"• {item}")
-
-    vision = st.text_area(
-        "Career Vision",
-        "I aim to work at the intersection of data analysis, data engineering, "
-        "and quantitative modeling to build scalable, data-driven systems "
-        "for research, finance, and technology."
-    )
-    st.info(vision)
-
-# --------------------------------------------------
-# Projects
-# --------------------------------------------------
-elif menu == "Projects":
-    st.title("🧠 Projects")
-
-    with st.expander("Add Project"):
-        title = st.text_input("Project Title")
-        tech = st.text_input("Technologies Used")
-        desc = st.text_area("Project Description")
-        link = st.text_input("Project Link")
-
-        if st.button("Add Project"):
-            st.session_state.projects.append({
-                "Title": title,
-                "Tech": tech,
-                "Description": desc,
-                "Link": link
-            })
-            st.success("Project added")
-
-    for proj in st.session_state.projects:
-        st.markdown(f"""
-        ### {proj['Title']}
-        **Tech:** {proj['Tech']}  
-        {proj['Description']}  
-        🔗 {proj['Link']}
-        """)
-
-# --------------------------------------------------
-# Publications
+# 3. Publications (With Dataframe View)
 # --------------------------------------------------
 elif menu == "Publications":
     st.title("📚 Publications")
-
+    
     with st.expander("Add Publication"):
         title = st.text_input("Title")
-        authors = st.text_input("Authors")
-        venue = st.text_input("Journal / Conference")
-        year = st.number_input("Year", 2000, 2100, 2024)
-
-        if st.button("Add Publication"):
-            st.session_state.publications.append({
-                "Title": title,
-                "Authors": authors,
-                "Venue": venue,
-                "Year": year
-            })
-            st.success("Publication added")
-
+        yr = st.number_input("Year", 2000, 2026, 2024)
+        if st.button("Add"):
+            st.session_state.publications.append({"Title": title, "Year": yr})
+            
     if st.session_state.publications:
-        df = pd.DataFrame(st.session_state.publications)
-        st.dataframe(df)
+        pub_df = pd.DataFrame(st.session_state.publications)
+        st.table(pub_df) # Table looks cleaner for academic lists
 
 # --------------------------------------------------
-# STEM Data Explorer
+# 4. STEM Explorer (The "Data Science" Part)
 # --------------------------------------------------
-elif menu == "STEM Data Explorer":
+elif menu == "STEM Explorer":
     st.title("📊 STEM Data Explorer")
-
-    ai_data = pd.DataFrame({
-        "Algorithm": ["Neural Net", "Decision Tree", "SVM", "Random Forest", "Transformer"],
-        "Accuracy (%)": [92, 85, 88, 90, 95]
-    })
-
-    st.metric("Best Accuracy", f"{ai_data['Accuracy (%)'].max()}%")
-    st.bar_chart(ai_data.set_index("Algorithm"))
+    
+    uploaded_file = st.file_uploader("Upload your research CSV", type="csv")
+    
+    if uploaded_file:
+        df = pd.read_csv(uploaded_file)
+        st.write("### Data Preview")
+        st.dataframe(df.head())
+        
+        st.write("### Quick Visualization")
+        columns = df.columns.tolist()
+        x_axis = st.selectbox("Select X axis", columns)
+        y_axis = st.selectbox("Select Y axis", columns)
+        st.line_chart(df.set_index(x_axis)[y_axis])
+    else:
+        st.info("Upload a CSV to analyze your own data, or view the sample below:")
+        sample_data = pd.DataFrame({"Trial": [1,2,3,4], "Result": [10, 25, 14, 30]})
+        st.bar_chart(sample_data.set_index("Trial"))
 
 # --------------------------------------------------
-# Contact
+# 5. Contact
 # --------------------------------------------------
 elif menu == "Contact":
     st.title("📬 Contact")
-    st.write("📧 Email: kevin.lee@example.com")
-    st.write("🔗 LinkedIn / GitHub available upon request")
-import streamlit as st
-import pandas as pd
-
-# --------------------------------------------------
-# Page Config
-# --------------------------------------------------
-st.set_page_config(
-    page_title="Research & Data Science Portfolio",
-    layout="wide"
-)
-
-# --------------------------------------------------
-# Sidebar Navigation
-# --------------------------------------------------
-st.sidebar.title("📌 Navigation")
-
-menu = st.sidebar.radio(
-    "Go to:",
-    [
-        "Researcher Profile",
-        "Education",
-        "Experience",
-        "Research Interests",
-        "Projects",
-        "Publications",
-        "STEM Data Explorer",
-        "Contact"
-    ]
-)
-
-# --------------------------------------------------
-# Initialize Session State
-# --------------------------------------------------
-for key in ["education", "experience", "projects", "publications"]:
-    if key not in st.session_state:
-        st.session_state[key] = []
-
-# --------------------------------------------------
-# Researcher Profile
-# --------------------------------------------------
-if menu == "Researcher Profile":
-    st.title("👤 Researcher Profile")
-
-    name = st.text_input("Name", "Dr. Kevin Lee")
-    field = st.text_input("Field", "Data Science & Artificial Intelligence")
-    institution = st.text_input("Institution", "Tech Innovation University")
-    bio = st.text_area(
-        "Short Bio",
-        "Researcher and data professional with interests in data analysis, "
-        "data engineering, and quantitative modeling."
-    )
-
-    col1, col2 = st.columns(2)
-    with col1:
-        st.write(f"**Name:** {name}")
-        st.write(f"**Field:** {field}")
-        st.write(f"**Institution:** {institution}")
-    with col2:
-        st.info(bio)
-
-# --------------------------------------------------
-# Education
-# --------------------------------------------------
-elif menu == "Education":
-    st.title("🎓 Education")
-
-    with st.expander("Add Education"):
-        degree = st.text_input("Degree")
-        school = st.text_input("School / University")
-        year = st.text_input("Year")
-        focus = st.text_area("Specialization / Focus")
-
-        if st.button("Add Education"):
-            st.session_state.education.append({
-                "Degree": degree,
-                "School": school,
-                "Year": year,
-                "Focus": focus
-            })
-            st.success("Education added")
-
-    for edu in st.session_state.education:
-        st.markdown(f"""
-        **{edu['Degree']}**  
-        *{edu['School']}* ({edu['Year']})  
-        {edu['Focus']}
-        """)
-
-# --------------------------------------------------
-# Experience
-# --------------------------------------------------
-elif menu == "Experience":
-    st.title("💼 Experience")
-
-    with st.expander("Add Experience"):
-        role = st.text_input("Role / Position")
-        org = st.text_input("Organization")
-        duration = st.text_input("Duration")
-        description = st.text_area("Description")
-
-        if st.button("Add Experience"):
-            st.session_state.experience.append({
-                "Role": role,
-                "Organization": org,
-                "Duration": duration,
-                "Description": description
-            })
-            st.success("Experience added")
-
-    for exp in st.session_state.experience:
-        st.markdown(f"""
-        **{exp['Role']}** — {exp['Organization']}  
-        *{exp['Duration']}*  
-        {exp['Description']}
-        """)
-
-# --------------------------------------------------
-# Research Interests
-# --------------------------------------------------
-elif menu == "Research Interests":
-    st.title("🔬 Research Interests & Career Ventures")
-
-    areas = {
-        "📊 Data Analysis": [
-            "Exploratory Data Analysis (EDA)",
-            "Statistical insights",
-            "Visualization and reporting"
-        ],
-        "🤖 Data Science": [
-            "Machine learning",
-            "Predictive modeling",
-            "Feature engineering"
-        ],
-        "🏗️ Data Engineering": [
-            "ETL pipelines",
-            "Databases and data warehousing",
-            "Big data systems"
-        ],
-        "📈 Quantitative Analysis": [
-            "Statistical modeling",
-            "Time-series analysis",
-            "Risk and performance modeling"
-        ]
-    }
-
-    for area, items in areas.items():
-        with st.expander(area):
-            for item in items:
-                st.write(f"• {item}")
-
-    vision = st.text_area(
-        "Career Vision",
-        "I aim to work at the intersection of data analysis, data engineering, "
-        "and quantitative modeling to build scalable, data-driven systems "
-        "for research, finance, and technology."
-    )
-    st.info(vision)
-
-# --------------------------------------------------
-# Projects
-# --------------------------------------------------
-elif menu == "Projects":
-    st.title("🧠 Projects")
-
-    with st.expander("Add Project"):
-        title = st.text_input("Project Title")
-        tech = st.text_input("Technologies Used")
-        desc = st.text_area("Project Description")
-        link = st.text_input("Project Link")
-
-        if st.button("Add Project"):
-            st.session_state.projects.append({
-                "Title": title,
-                "Tech": tech,
-                "Description": desc,
-                "Link": link
-            })
-            st.success("Project added")
-
-    for proj in st.session_state.projects:
-        st.markdown(f"""
-        ### {proj['Title']}
-        **Tech:** {proj['Tech']}  
-        {proj['Description']}  
-        🔗 {proj['Link']}
-        """)
-
-# --------------------------------------------------
-# Publications
-# --------------------------------------------------
-elif menu == "Publications":
-    st.title("📚 Publications")
-
-    with st.expander("Add Publication"):
-        title = st.text_input("Title")
-        authors = st.text_input("Authors")
-        venue = st.text_input("Journal / Conference")
-        year = st.number_input("Year", 2000, 2100, 2024)
-
-        if st.button("Add Publication"):
-            st.session_state.publications.append({
-                "Title": title,
-                "Authors": authors,
-                "Venue": venue,
-                "Year": year
-            })
-            st.success("Publication added")
-
-    if st.session_state.publications:
-        df = pd.DataFrame(st.session_state.publications)
-        st.dataframe(df)
-
-# --------------------------------------------------
-# STEM Data Explorer
-# --------------------------------------------------
-elif menu == "STEM Data Explorer":
-    st.title("📊 STEM Data Explorer")
-
-    ai_data = pd.DataFrame({
-        "Algorithm": ["Neural Net", "Decision Tree", "SVM", "Random Forest", "Transformer"],
-        "Accuracy (%)": [92, 85, 88, 90, 95]
-    })
-
-    st.metric("Best Accuracy", f"{ai_data['Accuracy (%)'].max()}%")
-    st.bar_chart(ai_data.set_index("Algorithm"))
-
-# --------------------------------------------------
-# Contact
-# --------------------------------------------------
-elif menu == "Contact":
-    st.title("📬 Contact")
-    st.write("📧 Email: kevin.lee@example.com")
-
-    st.write("🔗 LinkedIn / GitHub available upon request")
+    with st.form("contact_form"):
+        email = st.text_input("Your Email")
+        msg = st.text_area("Message")
+        submit = st.form_submit_button("Send")
+        if submit:
+            st.success("Message 'sent' (this is a simulation)!")
