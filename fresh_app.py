@@ -38,13 +38,13 @@ if menu == "Profile":
     
     col1, col2 = st.columns([1, 2])
     with col1:
-        st.text_input("Name", "Dr. Kevin Lee")
-        st.text_input("Field", "FinTech & Digital Economics")
+        st.text_input("Name", "Ritshidze Tshivhase")
+        st.text_input("Field", "Data Science & AI")
     with col2:
         st.text_area("Bio", "Specializing in how digital wallets bridge the gap for the unbanked in SA.")
 
 # --------------------------------------------------
-# 2. Education (FIXED)
+# 2. Education 
 # --------------------------------------------------
 elif menu == "Education":
     st.title("🎓 Education")
@@ -73,7 +73,7 @@ elif menu == "Education":
         st.write("No education records added yet.")
 
 # --------------------------------------------------
-# 3. Experience (FIXED)
+# 3. Experience 
 # --------------------------------------------------
 elif menu == "Experience":
     st.title("💼 Experience")
@@ -136,4 +136,5 @@ elif menu == "Research Interests":
 elif menu == "Contact":
     st.title("📬 Contact")
     st.write("📧 Email: kevin.lee@research.za")
+
 
