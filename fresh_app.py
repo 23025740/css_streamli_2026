@@ -32,7 +32,8 @@ menu = st.sidebar.radio(
         "Publications",
         "STEM Data Explorer",
         "Contact"
-    ]
+    ],
+    key="main_navigation"  
 )
 
 # --------------------------------------------------
@@ -470,4 +471,5 @@ elif menu == "STEM Data Explorer":
 elif menu == "Contact":
     st.title("📬 Contact")
     st.write("📧 Email: kevin.lee@example.com")
+
     st.write("🔗 LinkedIn / GitHub available upon request")
