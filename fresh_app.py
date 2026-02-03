@@ -135,6 +135,7 @@ elif menu == "Research Interests":
 # --------------------------------------------------
 elif menu == "Contact":
     st.title("📬 Contact")
-    st.write("📧 Email: kevin.lee@research.za")
+    st.write("📧 Email: tshivhaserichie@gmail.com")
+
 
 
