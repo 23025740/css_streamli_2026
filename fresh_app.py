@@ -1,130 +1,104 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import plotly.express as px
 
-# --- PAGE CONFIGURATION ---
-st.set_page_config(page_title="Tshivhase Ritshidze | Portfolio", layout="wide")
+# Set page configuration
+st.set_page_config(page_title="Tshivhase Ritshidze Portfolio", layout="wide")
 
-# --- SIDEBAR NAVIGATION ---
-st.sidebar.title("📌 Navigation")
+# Sidebar Menu (Original Structure)
+st.sidebar.title("Navigation")
 menu = st.sidebar.radio(
     "Go to:",
-    ["Profile", "Education & Experience", "Project Portfolio", "STEM Data Explorer: Research Hub", "Contact"],
+    ["Researcher Profile", "Publications", "STEM Data Explorer", "Contact"],
 )
 
-# --- SECTION: PROFILE ---
-if menu == "Profile":
-    col1, col2 = st.columns([1, 2])
-    with col1:
-        st.image("https://via.placeholder.com/300", caption="Tshivhase Ritshidze")
-    with col2:
-        st.title("Tshivhase Ritshidze")
-        st.subheader("BSc Computer Science & Mathematics | University of Venda")
-        st.write("""
-        I am a data-driven researcher and developer focusing on the intersection of **FinTech and Social Impact**. 
-        My current research investigates how mobile payment rails—specifically real-time systems like PayShap—are 
-        transforming financial inclusion for the unbanked and informal sectors in South Africa.
-        """)
-        st.markdown("### Technical Stack")
-        st.code("Languages: Python (Data Science), Java, C++, SQL\nTools: Streamlit, Plotly, Git, Linux", language='python')
+# --- DUMMY STEM DATA: FinTech & Inclusion Research ---
+# Data simulating SA financial trends 2021-2026
+inclusion_data = pd.DataFrame({
+    "Year": [2021, 2022, 2023, 2024, 2025, 2026],
+    "Unbanked Population (%)": [19.0, 18.2, 16.5, 15.0, 13.5, 12.1],
+    "Mobile Wallet Usage (%)": [35, 42, 58, 72, 81, 89],
+    "PayShap Volume (Millions)": [0, 0, 0.4, 74.2, 185.0, 390.0]
+})
 
-# --- SECTION: EDUCATION & EXPERIENCE ---
-elif menu == "Education & Experience":
-    st.header("Academic & Professional Journey")
+# --- SECTIONS ---
+
+if menu == "Researcher Profile":
+    st.title("Researcher Profile")
+    st.sidebar.header("Profile Options")
+
+    # Undergraduate Profile Information
+    name = "Tshivhase Ritshidze"
+    field = "BSc Computer Science & Mathematics"
+    institution = "University of Venda"
+    internship = "Software Engineering Intern | InterBoot"
+
+    st.write(f"**Name:** {name}")
+    st.write(f"**Academic Field:** {field}")
+    st.write(f"**Institution:** {institution}")
+    st.write(f"**Current Role:** {internship}")
     
-    with st.expander("💼 Internship: InterBoot", expanded=True):
-        st.write("#### **Software Engineering Intern**")
-        st.write("*InterBoot | 2025 - Present*")
-        st.write("""
-        - Developing scalable web applications and integrating secure payment APIs.
-        - Applying mathematical modeling to optimize system performance and data flow.
-        - Collaborating in an Agile environment to deliver user-centric software solutions.
-        """)
-
-    with st.expander("🎓 Education: University of Venda", expanded=True):
-        st.write("#### **BSc in Computer Science and Mathematics**")
-        st.write("*2023 - 2026 (Expected)*")
-        st.write("""
-        - **Core CS:** Data Structures, Algorithms, Database Systems, Software Engineering.
-        - **Core Maths:** Calculus, Linear Algebra, Discrete Mathematics, Numerical Analysis.
-        """)
-
-# --- SECTION: PROJECT PORTFOLIO ---
-elif menu == "Project Portfolio":
-    st.header("Selected Projects")
-    p1, p2 = st.columns(2)
-    with p1:
-        st.info("### Mobile Payment Impact Model")
-        st.write("A Python-based simulation analyzing how transaction fee reductions correlate with informal trader adoption.")
-    with p2:
-        st.success("### Algorithm Visualizer")
-        st.write("A tool built for peers at UniVen to visualize complex sorting algorithms in real-time.")
-
-# --- SECTION: STEM DATA EXPLORER (RESEARCH HUB) ---
-elif menu == "STEM Data Explorer: Research Hub":
-    st.title("📊 Research Dashboard")
-    st.header("The Adoption & Impact of Mobile Payment Systems on Financial Inclusion")
-    
-    st.markdown("""
-    This dashboard serves as a visualization tool for my undergraduate research. 
-    It tracks the shift from cash-heavy informal economies to digital 'alias-based' payment systems in South Africa.
+    st.info("""
+    **Research Overview:** Exploring how real-time, alias-based payment systems 
+    (like PayShap) impact financial inclusion for unbanked communities in South Africa.
     """)
 
-    # --- RESEARCH DATASET ---
-    # Representative data based on SARB Vision 2025 and 2024/2025 bank reports
-    data = {
-        "Year": [2021, 2022, 2023, 2024, 2025],
-        "Unbanked Population (%)": [19, 18.2, 16.5, 15.0, 13.1],
-        "PayShap Volume (Millions)": [0, 0, 0.4, 74.2, 461.0], # Surge in 2024/25
-        "Digital Wallet Usage (%)": [38, 42, 46, 70, 78]
-    }
-    df = pd.DataFrame(data)
+    # Tech-focused profile image
+    st.image(
+        "https://cdn.pixabay.com/photo/2016/11/19/14/00/code-1839406_1280.jpg",
+        caption="Bridging Mathematical Theory with Financial Technology"
+    )
 
-    # --- METRICS ---
-    m1, m2, m3 = st.columns(3)
-    m1.metric("Current Unbanked Rate", "13.1%", "-1.9% YoY")
-    m2.metric("PayShap Transactions (Total)", "461M", "+522% Growth")
-    m3.metric("Avg. Transaction Size", "R498", "Entry-level Targeted")
+elif menu == "Publications":
+    st.title("Publications")
+    st.sidebar.header("Upload and Filter")
 
-    # --- INTERACTIVE VISUALIZATION ---
-    st.divider()
-    st.subheader("Visualizing the Digital Leap")
-    
-    chart_choice = st.selectbox("Select View:", ["Financial Inclusion vs. Wallet Growth", "PayShap Adoption Curve"])
-    
-    if chart_choice == "Financial Inclusion vs. Wallet Growth":
-        fig = px.line(df, x="Year", y=["Unbanked Population (%)", "Digital Wallet Usage (%)"],
-                      title="Inverse Correlation: Digital Access vs. Financial Exclusion",
-                      markers=True, color_discrete_sequence=["#EF553B", "#636EFA"])
-        st.plotly_chart(fig, use_container_width=True)
+    # Your original upload and filter logic
+    uploaded_file = st.file_uploader("Upload a CSV of Publications", type="csv")
+    if uploaded_file:
+        publications = pd.read_csv(uploaded_file)
+        st.dataframe(publications)
+
+        keyword = st.text_input("Filter by keyword", "")
+        if keyword:
+            filtered = publications[
+                publications.apply(lambda row: keyword.lower() in row.astype(str).str.lower().values, axis=1)
+            ]
+            st.write(f"Filtered Results for '{keyword}':")
+            st.dataframe(filtered)
     else:
-        fig = px.bar(df, x="Year", y="PayShap Volume (Millions)", 
-                     title="PayShap Transaction Growth (Post-Launch 2023)",
-                     color="PayShap Volume (Millions)", color_continuous_scale="Viridis")
-        st.plotly_chart(fig, use_container_width=True)
+        st.write("#### Ongoing Research Works (2025-2026)")
+        st.write("- *The Digital Leap: PayShap's Role in Rural Formalization*")
+        st.write("- *Predicting Mobile Money Adoption using Stochastic Models*")
 
-    # --- RESEARCH ANALYSIS TABLE ---
-    st.subheader("Comparative Impact of Payment Rails")
-    impact_data = pd.DataFrame({
-        "System": ["PayShap", "FNB eWallet", "Capitec Pay", "MTN MoMo", "1Voucher"],
-        "Accessibility": ["High (Alias-based)", "Moderate", "High (App-based)", "High (USSD/Agent)", "Very High (Cash-to-Digital)"],
-        "Inclusion Target": ["SMEs/Individuals", "Remittance", "Retail Consumers", "Unbanked Rural", "Informal Traders"],
-        "Cost to User": ["Low (R0 < R100)", "Fixed Fee", "Low/Variable", "Tiered", "Commission-based"]
-    })
-    st.table(impact_data)
+elif menu == "STEM Data Explorer":
+    st.title("STEM Data Explorer")
+    st.sidebar.header("Data Selection")
     
-    st.info("**Research Insight:** My analysis shows that systems using 'ShapIDs' (cellphone numbers) significantly lower the psychological and technical barrier for unbanked individuals compared to traditional IBAN/Account formats.")
+    data_option = st.sidebar.selectbox(
+        "Choose a dataset to explore", 
+        ["Mobile Payment Adoption", "Financial Inclusion Metrics"]
+    )
 
-# --- SECTION: CONTACT ---
+    if data_option == "Mobile Payment Adoption":
+        st.write("### National Mobile Wallet Growth vs. Unbanked Rates")
+        st.dataframe(inclusion_data)
+        
+        # Original Filtering Logic (Modified for Year Range)
+        year_filter = st.slider("Filter by Year Range", 2021, 2026, (2023, 2026))
+        filtered_data = inclusion_data[inclusion_data["Year"].between(year_filter[0], year_filter[1])]
+        
+        st.write(f"Displaying Trends for {year_filter[0]} - {year_filter[1]}:")
+        st.line_chart(filtered_data.set_index("Year")[["Unbanked Population (%)", "Mobile Wallet Usage (%)"]])
+
+    elif data_option == "Financial Inclusion Metrics":
+        st.write("### PayShap Transaction Growth (Millions)")
+        st.bar_chart(inclusion_data.set_index("Year")["PayShap Volume (Millions)"])
+        st.success("**Research Finding:** A 500% surge in volume correlates with the 2024 proxy-ID rollout.")
+
 elif menu == "Contact":
-    st.header("📬 Contact & Collaboration")
-    st.write("I am currently open to internship opportunities and research collaborations in the FinTech space.")
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        st.write("📧 **Email:** [tshivhaseritshidze03@gmail.com](mailto:tshivhaseritshidze03@gmail.com)")
-        st.write("📍 **Location:** Thohoyandou, Limpopo")
-    with col2:
-        st.write("🔗 **LinkedIn:** [linkedin.com/in/yourprofile]")
-        st.write("💻 **GitHub:** [github.com/yourusername]")
+    st.header("Contact Information")
+    email = "tshivhaseritshidze03@gmail.com"
+    st.write(f"You can reach me at: **{email}**")
+    st.write("---")
+    st.write("📍 **Department of Computer Science & Mathematics | University of Venda**")
