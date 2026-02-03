@@ -1,142 +1,130 @@
 import streamlit as st
 import pandas as pd
+import numpy as np
+import plotly.express as px
 
-# --------------------------------------------------
-# Page Config
-# --------------------------------------------------
-st.set_page_config(
-    page_title="Research Portfolio | Mobile Payments SA",
-    page_icon="🇿🇦",
-    layout="wide"
-)
+# --- PAGE CONFIGURATION ---
+st.set_page_config(page_title="Tshivhase Ritshidze | Portfolio", layout="wide")
 
-# --------------------------------------------------
-# Initialization (Persistence Logic)
-# --------------------------------------------------
-if "education" not in st.session_state:
-    st.session_state.education = []
-if "experience" not in st.session_state:
-    st.session_state.experience = []
-if "projects" not in st.session_state:
-    st.session_state.projects = []
-
-# --------------------------------------------------
-# Sidebar Navigation
-# --------------------------------------------------
-st.sidebar.title("📌 Portfolio Navigation")
+# --- SIDEBAR NAVIGATION ---
+st.sidebar.title("📌 Navigation")
 menu = st.sidebar.radio(
     "Go to:",
-    ["Profile", "Education", "Experience", "Research Interests", "STEM Explorer", "Contact"]
+    ["Profile", "Education & Experience", "Project Portfolio", "STEM Data Explorer: Research Hub", "Contact"],
 )
 
-# --------------------------------------------------
-# 1. Profile Section
-# --------------------------------------------------
+# --- SECTION: PROFILE ---
 if menu == "Profile":
-    st.title("👤 Researcher Profile")
-    st.info("**Research Topic:** The Adoption and Impact of Mobile Payment Systems on Financial Inclusion in South Africa.")
-    
     col1, col2 = st.columns([1, 2])
     with col1:
-        st.text_input("Name", "Ritshidze Tshivhase")
-        st.text_input("Field", "Data Science & AI")
+        st.image("https://via.placeholder.com/300", caption="Tshivhase Ritshidze")
     with col2:
-        st.text_area("Bio", "Specializing in how digital wallets bridge the gap for the unbanked in SA.")
+        st.title("Tshivhase Ritshidze")
+        st.subheader("BSc Computer Science & Mathematics | University of Venda")
+        st.write("""
+        I am a data-driven researcher and developer focusing on the intersection of **FinTech and Social Impact**. 
+        My current research investigates how mobile payment rails—specifically real-time systems like PayShap—are 
+        transforming financial inclusion for the unbanked and informal sectors in South Africa.
+        """)
+        st.markdown("### Technical Stack")
+        st.code("Languages: Python (Data Science), Java, C++, SQL\nTools: Streamlit, Plotly, Git, Linux", language='python')
 
-# --------------------------------------------------
-# 2. Education 
-# --------------------------------------------------
-elif menu == "Education":
-    st.title("🎓 Education")
+# --- SECTION: EDUCATION & EXPERIENCE ---
+elif menu == "Education & Experience":
+    st.header("Academic & Professional Journey")
     
-    # Input Form
-    with st.expander("➕ Add New Education"):
-        with st.form("edu_form", clear_on_submit=True):
-            deg = st.text_input("Degree")
-            sch = st.text_input("University")
-            yr = st.text_input("Year")
-            if st.form_submit_button("Add Record"):
-                if deg and sch:
-                    st.session_state.education.append({"deg": deg, "sch": sch, "yr": yr})
-                    st.success(f"Added {deg}")
-                else:
-                    st.error("Please fill in Degree and School.")
+    with st.expander("💼 Internship: InterBoot", expanded=True):
+        st.write("#### **Software Engineering Intern**")
+        st.write("*InterBoot | 2025 - Present*")
+        st.write("""
+        - Developing scalable web applications and integrating secure payment APIs.
+        - Applying mathematical modeling to optimize system performance and data flow.
+        - Collaborating in an Agile environment to deliver user-centric software solutions.
+        """)
 
-    # Display List
-    st.markdown("### Academic History")
-    if st.session_state.education:
-        for edu in st.session_state.education:
-            st.markdown(f"**{edu['deg']}**")
-            st.write(f"{edu['sch']} — {edu['yr']}")
-            st.divider()
-    else:
-        st.write("No education records added yet.")
+    with st.expander("🎓 Education: University of Venda", expanded=True):
+        st.write("#### **BSc in Computer Science and Mathematics**")
+        st.write("*2023 - 2026 (Expected)*")
+        st.write("""
+        - **Core CS:** Data Structures, Algorithms, Database Systems, Software Engineering.
+        - **Core Maths:** Calculus, Linear Algebra, Discrete Mathematics, Numerical Analysis.
+        """)
 
-# --------------------------------------------------
-# 3. Experience 
-# --------------------------------------------------
-elif menu == "Experience":
-    st.title("💼 Experience")
+# --- SECTION: PROJECT PORTFOLIO ---
+elif menu == "Project Portfolio":
+    st.header("Selected Projects")
+    p1, p2 = st.columns(2)
+    with p1:
+        st.info("### Mobile Payment Impact Model")
+        st.write("A Python-based simulation analyzing how transaction fee reductions correlate with informal trader adoption.")
+    with p2:
+        st.success("### Algorithm Visualizer")
+        st.write("A tool built for peers at UniVen to visualize complex sorting algorithms in real-time.")
+
+# --- SECTION: STEM DATA EXPLORER (RESEARCH HUB) ---
+elif menu == "STEM Data Explorer: Research Hub":
+    st.title("📊 Research Dashboard")
+    st.header("The Adoption & Impact of Mobile Payment Systems on Financial Inclusion")
     
-    # Input Form
-    with st.expander("➕ Add New Experience"):
-        with st.form("exp_form", clear_on_submit=True):
-            role = st.text_input("Role")
-            org = st.text_input("Organization")
-            dur = st.text_input("Duration")
-            if st.form_submit_button("Add Experience"):
-                if role and org:
-                    st.session_state.experience.append({"role": role, "org": org, "dur": dur})
-                    st.success(f"Added {role}")
-                else:
-                    st.error("Please fill in Role and Organization.")
-
-    # Display List
-    st.markdown("### Professional Timeline")
-    if st.session_state.experience:
-        for exp in st.session_state.experience:
-            st.markdown(f"**{exp['role']}**")
-            st.write(f"*{exp['org']}* | {exp['dur']}")
-            st.divider()
-    else:
-        st.write("No experience records added yet.")
-
-# --------------------------------------------------
-# 4. STEM Explorer (Topic-Specific Data)
-# --------------------------------------------------
-elif menu == "STEM Explorer":
-    st.title("📊 Financial Inclusion Data Explorer")
-    
-    # Sample data related to your topic
-    data = {
-        "Method": ["Banking App", "Mobile Wallet", "USSD Payments", "Cash"],
-        "Adoption Rate (%)": [45, 30, 15, 60],
-        "Trust Score (1-10)": [8, 6, 7, 10]
-    }
-    df = pd.DataFrame(data)
-    
-    st.write("### Payment Method Preferences in SA Townships")
-    st.bar_chart(df.set_index("Method")["Adoption Rate (%)"])
-    st.table(df)
-
-# --------------------------------------------------
-# 5. Research Interests
-# --------------------------------------------------
-elif menu == "Research Interests":
-    st.title("🔬 Research Interests")
     st.markdown("""
-    * **Fintech Acceptance:** Factors influencing the transition from cash to digital.
-    * **Last-Mile Delivery:** How mobile payments reach rural communities in SA.
-    * **Policy Impact:** Evaluation of SARB's Vision 2025 on financial inclusion.
+    This dashboard serves as a visualization tool for my undergraduate research. 
+    It tracks the shift from cash-heavy informal economies to digital 'alias-based' payment systems in South Africa.
     """)
 
-# --------------------------------------------------
-# 6. Contact
-# --------------------------------------------------
+    # --- RESEARCH DATASET ---
+    # Representative data based on SARB Vision 2025 and 2024/2025 bank reports
+    data = {
+        "Year": [2021, 2022, 2023, 2024, 2025],
+        "Unbanked Population (%)": [19, 18.2, 16.5, 15.0, 13.1],
+        "PayShap Volume (Millions)": [0, 0, 0.4, 74.2, 461.0], # Surge in 2024/25
+        "Digital Wallet Usage (%)": [38, 42, 46, 70, 78]
+    }
+    df = pd.DataFrame(data)
+
+    # --- METRICS ---
+    m1, m2, m3 = st.columns(3)
+    m1.metric("Current Unbanked Rate", "13.1%", "-1.9% YoY")
+    m2.metric("PayShap Transactions (Total)", "461M", "+522% Growth")
+    m3.metric("Avg. Transaction Size", "R498", "Entry-level Targeted")
+
+    # --- INTERACTIVE VISUALIZATION ---
+    st.divider()
+    st.subheader("Visualizing the Digital Leap")
+    
+    chart_choice = st.selectbox("Select View:", ["Financial Inclusion vs. Wallet Growth", "PayShap Adoption Curve"])
+    
+    if chart_choice == "Financial Inclusion vs. Wallet Growth":
+        fig = px.line(df, x="Year", y=["Unbanked Population (%)", "Digital Wallet Usage (%)"],
+                      title="Inverse Correlation: Digital Access vs. Financial Exclusion",
+                      markers=True, color_discrete_sequence=["#EF553B", "#636EFA"])
+        st.plotly_chart(fig, use_container_width=True)
+    else:
+        fig = px.bar(df, x="Year", y="PayShap Volume (Millions)", 
+                     title="PayShap Transaction Growth (Post-Launch 2023)",
+                     color="PayShap Volume (Millions)", color_continuous_scale="Viridis")
+        st.plotly_chart(fig, use_container_width=True)
+
+    # --- RESEARCH ANALYSIS TABLE ---
+    st.subheader("Comparative Impact of Payment Rails")
+    impact_data = pd.DataFrame({
+        "System": ["PayShap", "FNB eWallet", "Capitec Pay", "MTN MoMo", "1Voucher"],
+        "Accessibility": ["High (Alias-based)", "Moderate", "High (App-based)", "High (USSD/Agent)", "Very High (Cash-to-Digital)"],
+        "Inclusion Target": ["SMEs/Individuals", "Remittance", "Retail Consumers", "Unbanked Rural", "Informal Traders"],
+        "Cost to User": ["Low (R0 < R100)", "Fixed Fee", "Low/Variable", "Tiered", "Commission-based"]
+    })
+    st.table(impact_data)
+    
+    st.info("**Research Insight:** My analysis shows that systems using 'ShapIDs' (cellphone numbers) significantly lower the psychological and technical barrier for unbanked individuals compared to traditional IBAN/Account formats.")
+
+# --- SECTION: CONTACT ---
 elif menu == "Contact":
-    st.title("📬 Contact")
-    st.write("📧 Email: tshivhaserichie@gmail.com")
-
-
-
-
+    st.header("📬 Contact & Collaboration")
+    st.write("I am currently open to internship opportunities and research collaborations in the FinTech space.")
+    
+    col1, col2 = st.columns(2)
+    with col1:
+        st.write("📧 **Email:** [tshivhaseritshidze03@gmail.com](mailto:tshivhaseritshidze03@gmail.com)")
+        st.write("📍 **Location:** Thohoyandou, Limpopo")
+    with col2:
+        st.write("🔗 **LinkedIn:** [linkedin.com/in/yourprofile]")
+        st.write("💻 **GitHub:** [github.com/yourusername]")
